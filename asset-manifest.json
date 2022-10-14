@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/adca-admin/static/css/main.3c7ff022.css",
-    "main.js": "/adca-admin/static/js/main.b2c7f337.js",
+    "main.js": "/adca-admin/static/js/main.a8dbfc05.js",
     "static/media/award.png": "/adca-admin/static/media/award.8a726c7a9a41fa5d9b6a.png",
     "index.html": "/adca-admin/index.html",
     "main.3c7ff022.css.map": "/adca-admin/static/css/main.3c7ff022.css.map",
-    "main.b2c7f337.js.map": "/adca-admin/static/js/main.b2c7f337.js.map"
+    "main.a8dbfc05.js.map": "/adca-admin/static/js/main.a8dbfc05.js.map"
   },
   "entrypoints": [
     "static/css/main.3c7ff022.css",
-    "static/js/main.b2c7f337.js"
+    "static/js/main.a8dbfc05.js"
   ]
 }
