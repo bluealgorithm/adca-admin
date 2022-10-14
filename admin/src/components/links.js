@@ -1,6 +1,8 @@
 import { AiFillHome } from "react-icons/ai";
 import { DiGoogleAnalytics } from "react-icons/di";
-import { ImUsers, ImUserMinus } from "react-icons/im";
+import { ImUsers } from "react-icons/im";
+import { BiCategoryAlt } from "react-icons/bi";
+import { MdCategory } from "react-icons/md";
 import { HiOutlineUserGroup } from "react-icons/hi";
 export const links = [
   {
@@ -16,12 +18,12 @@ export const links = [
   {
     title: "Pages",
     links: [
+      // {
+      //   name: "Total Votes",
+      //   icon: <DiGoogleAnalytics />,
+      // },
       {
-        name: "Total Votes",
-        icon: <DiGoogleAnalytics />,
-      },
-      {
-        name: "voters",
+        name: "total-votes",
         icon: <ImUsers />,
       },
       {
@@ -29,8 +31,16 @@ export const links = [
         icon: <HiOutlineUserGroup />,
       },
       {
-        name: "ADCA Categories",
-        icon: <ImUserMinus />,
+        name: "categories",
+        icon: <MdCategory />,
+      },
+      {
+        name: "create-categories",
+        icon: <BiCategoryAlt />,
+      },
+      {
+        name: "create-sub-categories",
+        icon: <BiCategoryAlt />,
       },
     ],
   },

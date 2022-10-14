@@ -2,14 +2,26 @@ import React from 'react'
 import { Link, NavLink,  } from 'react-router-dom'
 import { SiShopware } from 'react-icons/si'
 import { MdOutlineCancel } from 'react-icons/md'
-
+import {FiLogOut} from 'react-icons/fi'
 import { useStateContext } from '../context/AuthContext'
 import { links } from './links'
 import logo from '../img/logo.png'
-
+import { getUser, removeUserSession } from '../utils/common'
+import { useNavigate } from 'react-router-dom'
 const Sidebar = () => {
-    const {activeMenu, setActiveMenu, screenSize} = useStateContext()
+    const {activeMenu, setActiveMenu, screenSize, logout, setLogin} = useStateContext()
+const navigate = useNavigate()
+  const user = getUser()
 
+  const handleLogout = () => {
+    // removeUserSession()
+    logout()
+    navigate('/login')
+    handleCloseSidebar()
+    setActiveMenu(false)
+    setLogin(true)
+    console.log('loggingout')
+  }
     const handleCloseSidebar = () => {
         if (activeMenu && screenSize <= 900) {
             setActiveMenu(false)
@@ -41,13 +53,16 @@ const Sidebar = () => {
                                     isActive ? activeLink : normalLink
                                 }>
                                   {link.icon}
-                                  <span className='capitalize'>{link.name}</span>
+                                  <span className='capitalize'>{link.name || 'overview'}</span>
                                 </NavLink>
                             ))}
                       </div>
                   ))}
               </div>
           </>)}
+          <NavLink to='/' onClick={handleLogout} className='flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2 bg-red-500 mt-[80px]'>
+            <FiLogOut /><span className='capitalize'>logout</span>
+            </NavLink>
     </div>
   )
 }

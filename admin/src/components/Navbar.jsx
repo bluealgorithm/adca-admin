@@ -7,8 +7,8 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import {FaToggleOn, FaToggleOff} from 'react-icons/fa'
 import avatar from '../img/avatar.jpg'
 // import {Cart, Chat, Notification, UserProfile} from '.'
-import { useStateContext } from '../context/AuthContext'
 
+import { useStateContext } from '../context/AuthContext'
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
     <button type='button' onClick={customFunc} style={{ color }} className='relative text-xl rounded-full p-3 hover:bg-light-gray' >
@@ -18,7 +18,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 )
 const Navbar = () => {
   const { activeMenu, setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize, darkToggle, setDarkToggle } = useStateContext()
-  
+   
   useEffect(() => {
     const handleResize = ()=>setScreenSize(window.innerWidth)
 
@@ -38,7 +38,7 @@ const Navbar = () => {
   }, [screenSize])
   
   return (
-    <div className='flex justify-between p-2 md:mx-6 relative '>
+    <div className='flex justify-between p-2 md:mx-6 relative' style={{borderBottom: '0.6px solid #878787'}}>
       <NavButton title='Menu' customFunc={() => setActiveMenu((prevState) => !prevState)} color='blue' icon={<AiOutlineMenu />} />
       
       <div className='flex'>

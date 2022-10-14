@@ -5,7 +5,7 @@ import { getToken } from "./common";
 const PrivateRoute = () => {
   const token = getToken();
   // console.log(token);
-  return token ? <Outlet /> : <Navigate to="/signin" />;
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

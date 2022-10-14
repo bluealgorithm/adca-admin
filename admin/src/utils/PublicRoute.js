@@ -4,7 +4,7 @@ import { getToken } from "./common";
 
 const PublicRoute = () => {
   const token = getToken();
-  return !token ? <Outlet /> : <Navigate to="/" />;
+  return !token ? <Outlet /> : <Navigate to="/overview" />;
 };
 
 export default PublicRoute;

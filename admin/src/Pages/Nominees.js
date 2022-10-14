@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import { AiOutlineMenu } from 'react-icons/ai'
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import dateFormat, { masks } from "dateformat";
 import { useStateContext } from "../context/AuthContext";
+import Animation from "../components/Animation";
 
 let num = 0;
+const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
+    <button type='button' onClick={customFunc} style={{ color }} className='relative text-xl rounded-full p-3 hover:bg-light-gray' >
+      <span style={{backgroundColor: dotColor}} className='absolute inline-flex rounded-full h-2 w-2 right-2 top-2' />
+        {icon}
+    </button>
+)
 function Nominees() {
-  const { darkToggle } = useStateContext();
+  const { darkToggle, activeMenu, setActiveMenu, } = useStateContext();
   const [info, setInfo] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [show, setShow] = useState(false)
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 20 },
     {
@@ -64,7 +73,7 @@ function Nominees() {
     );
     const data = await response.json();
     setUserInfo(data);
-    console.log(data);
+    // setShow(true)
   };
   // useEffect(
   //   (event) => {
@@ -89,6 +98,7 @@ function Nominees() {
   });
   // console.log(items);
   return (
+      <Animation>
     <div className="block md:flex gap-5 dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
       <Box className="h-[500px] w-[95%] md:w-[70%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
         <DataGrid
@@ -106,10 +116,10 @@ function Nominees() {
           }}
         />
       </Box>
-      <div className="mt-[18px] md:mt-0 bg-white rounded h-[100vh] md:w-[28%] mr-3 md:overflow-hidden overflow-auto md:hover:overflow-auto dark:bg-main-dark-bg">
+      <div className={`mt-[18px] md:mt-0 bg-white rounded h-[100vh] md:w-[28%] mr-3 md:overflow-hidden overflow-auto md:hover:overflow-auto dark:bg-main-dark-bg`}>
         {userInfo ? (
           // const {nominationInfo, personalInfo} = userInfo
-          <div className="mx-[12px]">
+          <div className="mx-[12px]">            
             <h3 className="font-[600] text-[20px] mt-[25px] text-center">
               Nominators
             </h3>
@@ -192,12 +202,13 @@ function Nominees() {
             </p>
           </div>
         ) : (
-          <div className="flex items-center justify-center p-[15px]">
+          <div className="hidden md:flex items-center justify-center p-[15px]">
             <p>Please Select a Row to see full details</p>
           </div>
         )}
       </div>
-    </div>
+    </div> 
+      </Animation>
   );
 }
 export default Nominees;

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { useStateContext } from "../context/AuthContext";
+import Animation from "../components/Animation";
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -47,8 +49,12 @@ const rows = [
 ];
 
 export default function Voters() {
+  const { darkToggle } = useStateContext();
+
   return (
-    <Box sx={{ height: 400 }} className='w-[80%] mx-auto mt-[25px]'>
+    <div className="dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white h-screen pt-[80px] md:pt-[25px]">
+      <Animation>
+    <Box sx={{ height: 400 }} className='w-[80%] mx-auto dark:bg-main-dark-bg dark:border-none'>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -56,8 +62,14 @@ export default function Voters() {
         rowsPerPageOptions={[5]}
         checkboxSelection
         disableSelectionOnClick
-        experimentalFeatures={{ newEditingApi: true }}
+          experimentalFeatures={{ newEditingApi: true }}
+          sx={{
+            borderColor: `${darkToggle && "grey.500"}`,
+            color: `${darkToggle && "white"}`,
+          }}
       />
     </Box>
+    </Animation>
+    </div>
   );
 }
