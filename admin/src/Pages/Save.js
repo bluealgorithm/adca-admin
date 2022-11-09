@@ -9,6 +9,7 @@ const Nominees = () => {
         width: `100%`,
       }}
     >
+      "homepage": "http://bluealgorithm.github.io/adca-admin",
       <Typography
         variant="h3"
         component="h3"
@@ -16,7 +17,6 @@ const Nominees = () => {
       >
         Manage User
       </Typography>
-
       {/* <DataGrid column={2} rows={2} /> */}
     </Box>
   );

@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbar,
+  GridColDef,
+  GridValueGetterParams,
+} from "@mui/x-data-grid";
 import dateFormat, { masks } from "dateformat";
 import { useStateContext } from "../context/AuthContext";
 import Animation from "../components/Animation";
+import { url } from "../url";
+import { FiEdit } from "react-icons/fi";
+import { AiFillDelete } from "react-icons/ai";
 
 let num = 0;
 function Categories() {
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { darkToggle } = useStateContext();
   const [info, setInfo] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -32,61 +43,42 @@ function Categories() {
       editable: true,
     },
   ];
- 
-
-  // const fetchCategories = async () => {
-  //   const response = await fetch(
-  //     `https://adca-api.onrender.com/api/categories`
-  //   );
-  //   const data = await response.json();
-  //   setInfo(data);
-  //   console.log(data);
-  // };
-
-  // useEffect(() => {
-  //       fetchCategories();
-  //    return () => {
-  //      fetchCategories()
-  //   }
-  // }, []);
 
   const fetchSubCategories = async () => {
-    const response = await fetch(
-      `https://adca-api.onrender.com/api/subcategories`
-    );
+    const response = await fetch(`${url}/subcategories`);
     const data = await response.json();
     setSubCategories(data);
-    console.log(data);
   };
 
   useEffect(() => {
-        fetchSubCategories();
-     return () => {
-       fetchSubCategories()
-    }
+    fetchSubCategories();
+    return () => {
+      fetchSubCategories();
+    };
   }, []);
 
   return (
-    <div className="h-screen dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
+    <div className="h-screen pt-[50px] md:pt-[10px] dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
       <Animation>
-      <Box className="h-[500px] w-[95%] md:w-[95%] pt-[45px] md:mp-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
-        <DataGrid
-          rows={subCategories}
-          columns={columns}
-          getRowId={(subCategories) => subCategories._id}
-          pageSize={7}
-          rowsPerPageOptions={[7]}
-          // checkboxSelection
-          experimentalFeatures={{ newEditingApi: true }}
-          // onRowClick={fetchPersonalInfo}
-          sx={{
-            borderColor: `${darkToggle && "grey.500"}`,
-            color: `${darkToggle && "white"}`,
-          }}
-        />
+        <Box className="h-[700px] w-[95%] md:w-[95%] pt-[45px] md:mb-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
+          <DataGrid
+            rows={subCategories}
+            columns={columns}
+            getRowId={(subCategories) => subCategories._id}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            // checkboxSelection
+            experimentalFeatures={{ newEditingApi: true }}
+            // onRowClick={fetchPersonalInfo}
+            sx={{
+              borderColor: `${darkToggle && "grey.500"}`,
+              color: `${darkToggle && "white"}`,
+            }}
+            components={{ Toolbar: GridToolbar }}
+          />
         </Box>
-        </Animation>
-      </div>
+      </Animation>
+    </div>
   );
 }
 export default Categories;

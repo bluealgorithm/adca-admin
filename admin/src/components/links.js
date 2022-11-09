@@ -31,6 +31,10 @@ export const links = [
         icon: <HiOutlineUserGroup />,
       },
       {
+        name: "candidates",
+        icon: <HiOutlineUserGroup />,
+      },
+      {
         name: "categories",
         icon: <MdCategory />,
       },
@@ -40,6 +44,10 @@ export const links = [
       },
       {
         name: "create-sub-categories",
+        icon: <BiCategoryAlt />,
+      },
+      {
+        name: "set-event-info",
         icon: <BiCategoryAlt />,
       },
     ],
