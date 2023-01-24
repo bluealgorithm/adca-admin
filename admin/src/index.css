@@ -16,3 +16,7 @@ body {
 .card{
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.06)
 }
+.uploadcare--widget__button{
+  background-color: rgba(255, 160, 72, 0.95) !important;
+  display: block;
+}

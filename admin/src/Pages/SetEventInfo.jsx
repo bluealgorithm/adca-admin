@@ -27,7 +27,7 @@ const SetEventInfo = () => {
     });
   };
   const handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const fetchNomDate = async () => {
       let myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");

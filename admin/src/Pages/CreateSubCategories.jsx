@@ -38,7 +38,7 @@ const CreateSubCategories = () => {
   }, []);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     let createCategory = async () => {
       let myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");

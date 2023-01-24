@@ -1,9 +1,11 @@
 import { AiFillHome } from "react-icons/ai";
 import { DiGoogleAnalytics } from "react-icons/di";
 import { ImUsers } from "react-icons/im";
-import { BiCategoryAlt } from "react-icons/bi";
+import { BiCategoryAlt, BiPencil } from "react-icons/bi";
 import { MdCategory } from "react-icons/md";
 import { HiOutlineUserGroup } from "react-icons/hi";
+// import { BiPencil } from "react-icons/bi";
+
 export const links = [
   {
     title: "Overview",
@@ -34,6 +36,10 @@ export const links = [
         name: "candidates",
         icon: <HiOutlineUserGroup />,
       },
+      // {
+      //   name: "edit-nominees",
+      //   icon: <BiPencil />,
+      // },
       {
         name: "categories",
         icon: <MdCategory />,
@@ -47,7 +53,19 @@ export const links = [
         icon: <BiCategoryAlt />,
       },
       {
+        name: "reservations",
+        icon: <BiCategoryAlt />,
+      },
+      {
         name: "set-event-info",
+        icon: <BiCategoryAlt />,
+      },
+      {
+        name: "set-event-speaker",
+        icon: <BiCategoryAlt />,
+      },
+      {
+        name: "event-speakers",
         icon: <BiCategoryAlt />,
       },
     ],

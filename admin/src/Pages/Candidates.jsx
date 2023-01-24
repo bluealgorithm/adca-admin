@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiTwotoneDelete } from "react-icons/ai";
 import {
   DataGrid,
   GridColDef,
@@ -11,7 +11,11 @@ import dateFormat, { masks } from "dateformat";
 import { useStateContext } from "../context/AuthContext";
 import Animation from "../components/Animation";
 import { url } from "../url";
+import { Button } from "@mui/material";
+import { GrEdit, GrView } from "react-icons/gr";
+import { BsPencilFill } from "react-icons/bs";
 
+import Modal from "../components/Modal";
 let num = 0;
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <button
@@ -36,6 +40,32 @@ function Candidates() {
   const [userInfo, setUserInfo] = useState(null);
   const [btnText, setBtnText] = useState(false);
   const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const handleUpdate = (e, row) => {
+    console.log(row);
+    // handleEdit(row);
+  };
+  const handleView = (e, row) => {
+    // console.log(row);
+    fetchPersonalInfo(row._id);
+  };
+  const handleDelete = (e, row) => {
+    e.stopPropagation();
+    console.log(row);
+    const deleteInfo = async () => {
+      const response = await fetch(`${url}/vote/candidates/${row._id}`, {
+        method: "delete",
+      });
+      const data = await response.json();
+      console.log(data);
+      setInfo(data);
+    };
+    deleteInfo();
+    // window.location.reload();
+    //do whatever you want with the row
+  };
+
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 20 },
     {
@@ -62,11 +92,40 @@ function Candidates() {
       width: 180,
       editable: true,
     },
+    // {
+    //   field: "createdAt",
+    //   headerName: "Date Approved",
+    //   width: 200,
+    //   editable: true,
+    // },
     {
-      field: "createdAt",
-      headerName: "Date Approved",
+      field: "actions",
+      headerName: "Actions",
       width: 200,
-      editable: true,
+      renderCell: (params) => {
+        return (
+          <>
+            <NavButton
+              title="Menu"
+              customFunc={(e) => handleUpdate(e, params.row)}
+              color="blue"
+              icon={<BsPencilFill />}
+            />
+            <NavButton
+              title="Menu"
+              customFunc={(e) => handleView(e, params.row)}
+              color="green"
+              icon={<GrView />}
+            />
+            <NavButton
+              title="Menu"
+              customFunc={(e) => handleDelete(e, params.row)}
+              color="red"
+              icon={<AiTwotoneDelete />}
+            />
+          </>
+        );
+      },
     },
   ];
   const fetchData = async () => {
@@ -74,7 +133,7 @@ function Candidates() {
     const data = await response.json();
     setInfo(data);
   };
-  console.log(info);
+  // console.log(info);
   useEffect(() => {
     fetchData();
     return () => {
@@ -82,35 +141,23 @@ function Candidates() {
     };
   }, []);
 
-  const fetchPersonalInfo = async (event) => {
-    // console.log(event.id);
-    const response = await fetch(`${url}/nominations/id/${event.id}`);
+  const fetchPersonalInfo = async (id) => {
+    console.log(id);
+    const response = await fetch(`${url}/vote/candidates/${id}`);
     const data = await response.json();
     setUserInfo(data);
-    // setShow(true)
+    console.log(data);
+    // setUserId(id);
   };
-  // let items = [];
-  // if (info.length >= 1) {
-  // let items = info.map(({ _id, personalInfo, nominationInfo }) => {
-  //   const date = info.createdAt;
-  //   return {
-  //     id: num,
-  //     userId: _id,
-  //     name: personalInfo.name,
-  //     category: nominationInfo.category,
-  //     nomName: nominationInfo.nomName,
-  //     contactEmail: nominationInfo.contactEmail,
-  //     createdAt: dateFormat(date, "fullDate"),
-  //   };
-  // });
-
-  // console.log(items);
-  // for (let i = 0; i < items.length; i++) {
-  //   return (num = i);
-  // }
-  // console.log(items);
+  const handleEdit = async (user) => {
+    const response = await fetch(`${url}/nominations/id/${user.userId}`);
+    const data = await response.json();
+    setUserInfo(data);
+    setOpen(true);
+  };
   return (
     <Animation>
+      <Modal modalOpen={open} user={userInfo} />
       <div className="block md:flex gap-5 dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
         <Box className="h-[700px] w-[95%] md:w-[70%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
           <DataGrid
@@ -120,8 +167,8 @@ function Candidates() {
             pageSize={10}
             rowsPerPageOptions={[10]}
             // checkboxSelection
-            experimentalFeatures={{ newEditingApi: true }}
-            onRowClick={fetchPersonalInfo}
+            // experimentalFeatures={{ newEditingApi: true }}
+            // onRowClick={fetchPersonalInfo}
             sx={{
               borderColor: `${darkToggle && "grey.500"}`,
               color: `${darkToggle && "white"}`,

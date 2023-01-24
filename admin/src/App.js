@@ -14,7 +14,9 @@ import Login from "./Pages/Login";
 import PrivateRoute from "./utils/PrivateRoute";
 import PublicRoute from "./utils/PublicRoute";
 import Candidates from "./Pages/Candidates";
+import Reservations from "./Pages/Reservations";
 import SetEventInfo from "./Pages/SetEventInfo";
+import SetEventSpeakers from "./Pages/SetEventSpeakers";
 
 function App() {
   const { activeMenu, darkToggle, login } = useStateContext();
@@ -70,7 +72,10 @@ function App() {
                 <Route exact path="/overview" element={<Overview />}></Route>
               </Route>
               <Route exact path="/nominees" element={<PrivateRoute />}>
-                <Route exact path="/nominees" element={<NewNom />}></Route>
+                <Route exact path="/nominees" element={<Nominees />}></Route>
+              </Route>
+              <Route exact path="/edit-nominees" element={<PrivateRoute />}>
+                <Route exact path="/edit-nominees" element={<NewNom />}></Route>
               </Route>
               <Route exact path="/candidates" element={<PrivateRoute />}>
                 <Route
@@ -107,11 +112,32 @@ function App() {
                   element={<CreateSubCategories />}
                 ></Route>
               </Route>
+              <Route exact path="/reservations" element={<PrivateRoute />}>
+                <Route
+                  exact
+                  path="/reservations"
+                  element={<Reservations />}
+                ></Route>
+              </Route>
               <Route exact path="/set-event-info" element={<PrivateRoute />}>
                 <Route
                   exact
                   path="/set-event-info"
                   element={<SetEventInfo />}
+                ></Route>
+              </Route>
+              {/* <Route exact path="/event-speakers" element={<PrivateRoute />}>
+                <Route
+                  exact
+                  path="/event-speakers"
+                  element={<SetEvent />}
+                ></Route>
+              </Route> */}
+              <Route exact path="/set-event-speaker" element={<PrivateRoute />}>
+                <Route
+                  exact
+                  path="/set-event-speaker"
+                  element={<SetEventSpeakers />}
                 ></Route>
               </Route>
             </Routes>

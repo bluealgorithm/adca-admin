@@ -11,14 +11,18 @@ import dateFormat, { masks } from "dateformat";
 import { useStateContext } from "../context/AuthContext";
 import Animation from "../components/Animation";
 import { url } from "../url";
-import Table from "../components/Table";
+import { Button } from "@mui/material";
+import { GrEdit, GrView } from "react-icons/gr";
+import { BsPencilFill } from "react-icons/bs";
+import Modal from "../components/Modal";
+
 let num = 0;
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <button
     type="button"
     onClick={customFunc}
     style={{ color }}
-    className="relative text-xl rounded-full p-3 hover:bg-light-gray"
+    className="relative text-xl rounded-full p-3 hover:bg-light-gray mr-4"
   >
     <span
       style={{ backgroundColor: dotColor }}
@@ -32,14 +36,84 @@ function Nominees() {
   const [info, setInfo] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [btnText, setBtnText] = useState(false);
+  const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [approve, setApprove] = useState("");
-
+  const handleUpdate = (e, row) => {
+    console.log(row);
+    handleEdit(row);
+  };
+  const handleView = (e, row) => {
+    console.log(row);
+    fetchPersonalInfo(row.userId);
+  };
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID", width: 20 },
+    {
+      field: "name",
+      headerName: "Nominator's Name",
+      width: 200,
+      editable: true,
+    },
+    {
+      field: "category",
+      headerName: "Voted Category",
+      width: 220,
+      editable: true,
+    },
+    {
+      field: "subcategory",
+      headerName: "Voted Subcategory",
+      width: 220,
+      editable: true,
+    },
+    {
+      field: "nomName",
+      headerName: "Nominee's Name",
+      width: 200,
+      editable: true,
+    },
+    {
+      field: "contactEmail",
+      headerName: "Nominee's Email",
+      width: 180,
+      editable: true,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <>
+            <NavButton
+              title="Menu"
+              customFunc={(e) => handleUpdate(e, params.row)}
+              color="blue"
+              icon={<BsPencilFill />}
+            />
+            <NavButton
+              title="Menu"
+              customFunc={(e) => handleView(e, params.row)}
+              color="green"
+              icon={<GrView />}
+            />
+          </>
+        );
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Date Nominated",
+      width: 200,
+      editable: true,
+    },
+  ];
   const fetchData = async () => {
     const response = await fetch(`${url}/nominations`);
     const data = await response.json();
     setInfo(data);
-    console.log(info);
+    // console.log(info);
   };
   useEffect(() => {
     fetchData();
@@ -48,14 +122,11 @@ function Nominees() {
     };
   }, []);
 
-  const fetchPersonalInfo = async (event) => {
-    // console.log(event.id);
-    const response = await fetch(`${url}/nominations/id/${event.id}`);
+  const fetchPersonalInfo = async (id) => {
+    const response = await fetch(`${url}/nominations/id/${id}`);
     const data = await response.json();
     setUserInfo(data);
-    setUserId(event.id);
-    console.log(data);
-    // setShow(true)
+    setUserId(id);
   };
 
   const approveNomination = async (id) => {
@@ -74,14 +145,54 @@ function Nominees() {
     setApprove(data);
     if ((data.message = "Nomination approved successfully" && userId === id))
       setBtnText(true);
-    window.location.reload(); 
+    // console.log(data);
+    window.location.reload();
   };
 
+  let items = info.map((data) => {
+    const date = info.createdAt;
+    // if (data.approved) {
+    const { _id, personalInfo, nominationInfo } = data;
+    return {
+      id: num,
+      userId: _id,
+      name: personalInfo.name,
+      category: nominationInfo.category,
+      subcategory: nominationInfo.subcategory,
+      nomName: nominationInfo.nomName,
+      contactEmail: nominationInfo.contactEmail,
+      createdAt: dateFormat(data.createdAt, "fullDate"),
+    };
+  });
+  const handleEdit = async (user) => {
+    const response = await fetch(`${url}/nominations/id/${user.userId}`);
+    const data = await response.json();
+
+    setUserInfo(data);
+    setOpen(true);
+  };
   return (
     <Animation>
+      <Modal modalOpen={open} user={userInfo} />
       <div className="block md:flex gap-5 dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
-        <Box className="h-[500px] w-[95%] md:w-[70%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
-          <Table />
+        <Box className="h-[700px] w-[95%] md:w-[70%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
+          <DataGrid
+            rows={items}
+            columns={columns}
+            getRowId={(items) => items.userId}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            // checkboxSelection
+            // onCellEditCommit={handleEdit}
+            // onRowClick={fetchPersonalInfo}
+            // onRowClick={handleEdit}
+            sx={{
+              borderColor: `${darkToggle && "grey.500"}`,
+              color: `${darkToggle && "white"}`,
+            }}
+            // loading={loading}
+            components={{ Toolbar: GridToolbar }}
+          />
         </Box>
         <div
           className={`mt-[18px] md:mt-0 bg-white rounded h-[100vh] md:w-[28%] mr-3 md:overflow-hidden overflow-auto md:hover:overflow-auto dark:bg-main-dark-bg`}
@@ -180,7 +291,7 @@ function Nominees() {
                 onClick={() => approveNomination(userInfo._id)}
                 className={`${
                   btnText ? "bg-green-500" : "bg-blue-500"
-                } rounded-lg  text-white px-6 py-3 my-5 hover:bg-green-500 `}
+                } rounded-lg  text-white px-6 py-3 my-5 hover:bg-purple-500 mb-10`}
               >
                 {btnText ? "Approved" : "Approve"}
               </button>

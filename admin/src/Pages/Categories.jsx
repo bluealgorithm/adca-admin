@@ -26,7 +26,7 @@ function Categories() {
     { field: "id", headerName: "ID", width: 80 },
     {
       field: "category",
-      headerName: "Type of Nominee",
+      headerName: "Categories",
       width: 320,
       editable: true,
     },

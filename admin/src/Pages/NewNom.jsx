@@ -10,6 +10,8 @@ import {
 import dateFormat, { masks } from "dateformat";
 import { useStateContext } from "../context/AuthContext";
 import Animation from "../components/Animation";
+// import Swal from "sweetalert2";
+import Modal from "../components/Modal";
 import { url } from "../url";
 
 let num = 0;
@@ -34,6 +36,9 @@ function Nominees() {
   const [btnText, setBtnText] = useState(false);
   const [userId, setUserId] = useState(null);
   const [approve, setApprove] = useState("");
+  const [open, setOpen] = useState(false);
+  // let open = false;
+  // const MySwal = withReactContent(Swal);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 20 },
     {
@@ -77,7 +82,7 @@ function Nominees() {
     const response = await fetch(`${url}/nominations`);
     const data = await response.json();
     setInfo(data);
-    console.log(info);
+    // console.log(info);
   };
   useEffect(() => {
     fetchData();
@@ -87,20 +92,18 @@ function Nominees() {
   }, []);
 
   const fetchPersonalInfo = async (event) => {
-    // console.log(event.id);
+    // alert(event.id);
     const response = await fetch(`${url}/nominations/id/${event.id}`);
     const data = await response.json();
     setUserInfo(data);
+    setOpen(true);
+    // open = true;
     setUserId(event.id);
-    // console.log(data);
-    // setShow(true)
   };
 
   const approveNomination = async (id) => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    // myHeaders.append("Authorization", `Bearer ${auth.token}`);
-    // myHeaders.append("Authorization", `Bearer rnd_cR8FjAwOCy9lBAQjeMzH8I4WN4xI`);
     let response = await fetch(`${url}/nominations/${id}`, {
       method: "put",
       headers: myHeaders,
@@ -118,7 +121,6 @@ function Nominees() {
 
   let items = info.map((data) => {
     const date = info.createdAt;
-    // if (data.approved) {
     const { _id, personalInfo, nominationInfo } = data;
     return {
       id: num,
@@ -131,138 +133,65 @@ function Nominees() {
       createdAt: dateFormat(data.createdAt, "fullDate"),
     };
   });
+  const handleEdit = (
+    params, // GridCellEditCommitParams
+    event, // MuiEvent<MuiBaseEvent>
+    details
+  ) => {
+    const updateNomination = async () => {
+      console.log(params.row.category);
+
+      let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      let response = await fetch(`${url}/nominations/${params.row.userId}`, {
+        method: "patch",
+        headers: myHeaders,
+        body: JSON.stringify({
+          category: params.row.category,
+          subcategory: params.row.category,
+        }),
+      });
+      const data = await response.json();
+      setUserInfo(data);
+      setOpen(true);
+      setUserId(params.row.userId);
+      if (data.message === "Vote successful") {
+        console.log(data.message);
+        // handleAlert();
+      } else {
+        console.log(data.message);
+        // handleErrorAlert();
+      }
+    };
+    updateNomination();
+  };
   return (
     <Animation>
-      <div className="block md:flex gap-5 dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white">
-        <Box className="h-[700px] w-[95%] md:w-[70%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
-          <DataGrid
-            rows={items}
-            columns={columns}
-            getRowId={(items) => items.userId}
-            pageSize={10}
-            rowsPerPageOptions={[10]}
-            // checkboxSelection
-            experimentalFeatures={{ newEditingApi: true }}
-            onRowClick={fetchPersonalInfo}
-            sx={{
-              borderColor: `${darkToggle && "grey.500"}`,
-              color: `${darkToggle && "white"}`,
-            }}
-            // loading={loading}
-            components={{ Toolbar: GridToolbar }}
-          />
-        </Box>
-        <div
-          className={`mt-[18px] md:mt-0 bg-white rounded h-[100vh] md:w-[28%] mr-3 md:overflow-hidden overflow-auto md:hover:overflow-auto dark:bg-main-dark-bg`}
-        >
-          {userInfo ? (
-            // const {nominationInfo, personalInfo} = userInfo
-            <div className="mx-[12px]">
-              <h3 className="font-[600] text-[20px] mt-[25px] text-center">
-                Nominators
-              </h3>
-              <h3 className="font-[600] mt-[15px]">Name</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.personalInfo.name}
-              </p>
-              <h3 className="font-[600] mt-[15px]">Address</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.personalInfo.address}
-              </p>
-              <h3 className="font-[600] mt-[15px]">Phone Number</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.personalInfo.phoneNumber}
-              </p>
-              <h3 className="font-[600] mt-[15px]">Nominator's email</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.personalInfo.emailAddress}
-              </p>
-              <h3 className="font-[600] text-[20px] mt-[25px] text-center">
-                Nominees
-              </h3>
-              <h3 className="font-[600] mt-[15px]"> Name</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.nomName}
-              </p>
-              <h3 className="font-[600] mt-[15px]"> Type</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.nomineeType}
-              </p>
-              <h3 className="font-[600] mt-[15px]"> contact Person</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.contactPerson}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> Phone Number</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.contactPhoneNumber}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> job Title</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.jobTitle}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize">
-                {" "}
-                contact Email
-              </h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.contactEmail}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize">
-                {" "}
-                company Address
-              </h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.companyAddress}
-              </p>
+      <Modal modalOpen={open} user={userInfo} />
+      {/* <div className="block md:flex gap-5 dark:text-gray-200 dark:bg-main-dark-bg dark:hover:text-white"> */}
+      <Box className="h-[700px] w-[95%] md:w-[95%] mt-[45px] md:mt-[25px] bg-white rounded ml-3 dark:bg-main-dark-bg dark:border-none">
+        <DataGrid
+          rows={items}
+          columns={columns}
+          getRowId={(items) => items.userId}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
+          // checkboxSelection
+          editMode="row"
+          experimentalFeatures={{ newEditingApi: true }}
+          // onCellEditCommit={handleEdit}
+          onRowClick={fetchPersonalInfo}
+          // onRowClick={handleEdit}
+          sx={{
+            borderColor: `${darkToggle && "grey.500"}`,
+            color: `${darkToggle && "white"}`,
+          }}
+          // loading={loading}
+          components={{ Toolbar: GridToolbar }}
+        />
+      </Box>
 
-              <h3 className="font-[600] mt-[15px] capitalize">
-                {" "}
-                company Website Url
-              </h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.companyWebsiteUrl}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> city</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.city}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> country</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.country}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> Category</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.category}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize"> Subcategory</h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.subcategory}
-              </p>
-              <h3 className="font-[600] mt-[15px] capitalize">
-                {" "}
-                milestoneAchieved
-              </h3>
-              <p className="font-[600] text-gray-300 text-[14px]">
-                {userInfo.nominationInfo.milestoneAchieved}
-              </p>
-              <button
-                onClick={() => approveNomination(userInfo._id)}
-                className={`${
-                  btnText ? "bg-green-500" : "bg-blue-500"
-                } rounded-lg  text-white px-6 py-3 my-5 hover:bg-purple-500 mb-10`}
-              >
-                {btnText ? "Approved" : "Approve"}
-              </button>
-            </div>
-          ) : (
-            <div className="hidden h-screen md:flex items-center justify-center p-[15px]">
-              <p className="font-[600] text-[20px] text-center">
-                Select a Row to view the full details of the Nominee
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* </div> */}
     </Animation>
   );
 }
